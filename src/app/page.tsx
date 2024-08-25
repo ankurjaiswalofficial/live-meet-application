@@ -87,7 +87,8 @@ export default function Dashboard() {
               </TooltipContent>
             </Tooltip>
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
+                <div>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Avatar>
@@ -104,6 +105,7 @@ export default function Dashboard() {
                     <TooltipArrow />
                   </TooltipContent>
                 </Tooltip>
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Ankur Jaiswal <br /> ankurjaiswalofficial@gmail.com</DropdownMenuLabel>
@@ -126,7 +128,7 @@ export default function Dashboard() {
             <CardContent>
               <div className="w-full flex flex-col sm:flex-row items-center justify-start gap-6 mt-4">
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild>
                     <Button className="text-base gap-2 p-6 px-5 bg-blue-600 text-white hover:bg-blue-700"><Video className="h-6 w-6" /> New Meeting</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className={"left-[50%]"} >

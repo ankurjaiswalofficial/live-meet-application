@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 interface TooltipIconButtonProps { title: string, className?: string, onClick?: () => void, children: ReactNode, disabled?: boolean, active?: boolean, required?: boolean, ghost?: boolean }
 
-function TooltipIconButton({ title, className, onClick, children, disabled = false, active = false, required = false, ghost = false }: TooltipIconButtonProps) {
+function TooltipIconButton({ title, className, onClick, children, disabled = false, active = false, required = false, ghost = false }: Readonly<TooltipIconButtonProps>) {
 
     return (
         <Tooltip>

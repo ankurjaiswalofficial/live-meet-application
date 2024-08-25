@@ -48,8 +48,8 @@ const CameraMicCapture: React.FC<CameraMicCaptureProps> = () => {
     };
 
     return (
-        <div>
-            <video ref={videoRef} autoPlay></video>
+        <div className='w-full h-full'>
+            <video ref={videoRef} autoPlay className='w-full'></video>
             <audio ref={audioRef} autoPlay></audio>
             <button onClick={isCapturing ? stopCapture : startCapture}>
                 {isCapturing ? 'Stop Capture' : 'Start Capture'}
