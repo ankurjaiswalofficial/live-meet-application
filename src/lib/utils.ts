@@ -11,7 +11,7 @@ export function generateFallbackText(text?: string): string {
       return "UN";
     }
     const words = text.split(' ');
-    return words.map((word, index) => word[0].toUpperCase()).join('').slice(0, 2)
+    return words.map((word) => word[0].toUpperCase()).join('').slice(0, 2)
   }
   return 'UN';
 }
