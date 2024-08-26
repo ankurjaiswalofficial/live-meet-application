@@ -1,8 +1,10 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
+//TODO: Handle for the automatic or user defined triggering of the states as fullscreen and exit fullscreen.
+
 export const toggleFullscreen = createAsyncThunk(
     'fullscreen/toggleFullscreen',
-    async (_, { getState }) => {
+    async (_, {getState}) => {
         const state = getState() as { fullScreen: { isFullscreen: boolean } };
         const documentElement = document.documentElement;
         console.log("Came to fullscreen", state);
