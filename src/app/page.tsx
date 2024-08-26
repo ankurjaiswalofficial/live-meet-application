@@ -24,7 +24,6 @@ import { Input } from "@/components/ui/input"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { TooltipArrow } from "@radix-ui/react-tooltip"
@@ -43,7 +42,6 @@ export default function Dashboard() {
     return () => clearInterval(intervalId);
   }, []);
   return (
-    <TooltipProvider delayDuration={50}>
       <div className="flex min-h-screen w-full flex-col">
         <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
           <nav className="flex items-center justify-start">
@@ -158,7 +156,6 @@ export default function Dashboard() {
           </Card>
         </main>
       </div>
-    </TooltipProvider>
   )
 }
 
