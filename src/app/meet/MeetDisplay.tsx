@@ -8,7 +8,7 @@ export default function MeetDisplay() {
                 <ContactCard key={index} />
             ))}
             <div className="absolute bottom-4 right-4">
-                <ContactCard />
+                {/*<ContactCard />*/}
             </div>
         </div>
     )

@@ -1,24 +1,33 @@
-import React from 'react'
-import { Video, VideoOff } from 'lucide-react'
+import React, {RefObject, useContext} from 'react'
+import {RootState} from "@/app/redux/store";
+import {Video, VideoOff} from 'lucide-react'
 import TooltipIconButton from '@/components/TooltipIconButton'
+import {useSelector} from "react-redux";
+import {useAppDispatch} from "@/app/redux/hooks";
+import {toggleVideo} from "@/app/redux/slices/videoSlice";
+import {VideoContext} from "@/app/context/videoContext";
+
 
 export default function VideoHandler() {
-    const [videoActive, setVideoActive] = React.useState(false);
+    const videoRef = useContext<RefObject<HTMLVideoElement> | null >(VideoContext);
+    const isActive: boolean = useSelector((state: RootState) => state.videoHandler.isActive);
+    const dispatch = useAppDispatch();
     const handleVideoActive = () => {
-        setVideoActive(!videoActive)
+        console.log("Mic Clicked state => ", isActive);
+        dispatch(toggleVideo(videoRef));
     }
     return (
         <TooltipIconButton
             title="Turn on video"
             className=""
             required
-            active={videoActive}
+            active={isActive}
             onClick={handleVideoActive}
         >
-            {videoActive ? (
-                <Video className="h-5 w-5" />
+            {isActive ? (
+                <Video className="h-5 w-5"/>
             ) : (
-                <VideoOff className="h-5 w-5" />
+                <VideoOff className="h-5 w-5"/>
             )}
         </TooltipIconButton>
     )
