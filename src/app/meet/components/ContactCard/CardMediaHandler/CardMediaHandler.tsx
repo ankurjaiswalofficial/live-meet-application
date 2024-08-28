@@ -1,9 +1,9 @@
-import {cn} from '@/lib/utils'
 import React from 'react'
+import {RootState} from '@/app/redux/store';
+import {cn} from '@/lib/utils'
 import AudioElement from "@/app/meet/components/ContactCard/CardMediaHandler/AudioElement";
 import VideoElement from "@/app/meet/components/ContactCard/CardMediaHandler/VideoElement";
 import {useSelector} from "react-redux";
-import {RootState} from '@/app/redux/store';
 
 export default function CardMediaHandler() {
     const {audioActive, videoActive}: {
