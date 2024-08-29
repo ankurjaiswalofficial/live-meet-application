@@ -1,4 +1,6 @@
 {
+  "name": "google_meet_next_js",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -16,7 +18,6 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "with-tailwind",
   "packageManager": "npm@9.2.0",
   "workspaces": [
     "apps/*",
