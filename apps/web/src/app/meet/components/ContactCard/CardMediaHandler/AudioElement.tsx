@@ -1,10 +1,21 @@
-import {cn} from '@/lib/utils'
-import {useContext} from "react";
-import {AudioContext} from "@/context/audioContext";
+import { cn } from "@/lib/utils";
+import { MutableRefObject } from "react";
 
-export default function AudioElement() {
-    const audioRef = useContext(AudioContext);
+export interface AudioElementProps {
+    muted?: boolean;
+    audioRef: MutableRefObject<HTMLAudioElement> | null;
+}
+
+export default function AudioElement({
+    muted,
+    audioRef,
+}: Readonly<AudioElementProps>) {
     return (
-        <audio ref={audioRef} autoPlay className={cn({"invisible": true})}></audio>
-    )
+        <audio
+            muted={muted ?? false}
+            ref={audioRef}
+            autoPlay
+            className={cn({ invisible: true })}
+        ></audio>
+    );
 }

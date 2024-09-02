@@ -1,23 +1,36 @@
-import React, {useMemo} from 'react';
-import {RootState} from '@/redux/store';
-import {cn} from '@/lib/utils';
-import AudioElement from "@/app/meet/components/ContactCard/CardMediaHandler/AudioElement";
-import VideoElement from "@/app/meet/components/ContactCard/CardMediaHandler/VideoElement";
-import {useSelector} from "react-redux";
+import React, { useMemo } from "react";
+import { cn } from "@/lib/utils";
+import AudioElement, { AudioElementProps } from "./AudioElement";
+import VideoElement, { VideoElementProps } from "./VideoElement";
 
-export default function CardMediaHandler() {
-    const audioActive = useSelector((state: RootState) => state.audioHandler.isActive);
-    const videoActive = useSelector((state: RootState) => state.videoHandler.isActive);
+export interface CardMediaHandlerProps {
+    audioActive: boolean;
+    videoActive: boolean;
+    audioRef: AudioElementProps["audioRef"];
+    videoRef: VideoElementProps["videoRef"];
+    muted?: boolean;
+}
 
+export default function CardMediaHandler({
+    audioActive,
+    videoActive,
+    audioRef,
+    videoRef,
+    muted,
+}: Readonly<CardMediaHandlerProps>) {
     const isVisible = useMemo(() => {
         return videoActive && (audioActive || videoActive);
     }, [audioActive, videoActive]);
 
     return (
         <div
-            className={cn("absolute top-0 left-0 w-full h-full flex items-center", {"invisible": !isVisible})}>
-            <VideoElement/>
-            <AudioElement/>
+            className={cn(
+                "absolute top-0 left-0 w-full h-full flex items-center",
+                { invisible: !isVisible }
+            )}
+        >
+            <VideoElement isActive={videoActive} videoRef={videoRef} />
+            <AudioElement muted={muted} audioRef={audioRef} />
         </div>
-    )
+    );
 }

@@ -1,14 +1,23 @@
-import React, {useContext} from 'react'
-import {RootState} from '@/redux/store';
-import {cn} from '@/lib/utils'
-import {VideoContext} from "@/context/videoContext";
-import {useSelector} from "react-redux";
+import React, { MutableRefObject } from "react";
+import { cn } from "@/lib/utils";
 
-export default function VideoElement() {
-    const isActive: boolean = useSelector((state: RootState) => state.videoHandler.isActive);
-    const videoRef = useContext(VideoContext);
+export interface VideoElementProps {
+    isActive: boolean;
+    videoRef: MutableRefObject<HTMLVideoElement> | null;
+}
+
+export default function VideoElement({
+    isActive,
+    videoRef,
+}: Readonly<VideoElementProps>) {
     return (
-        <video ref={videoRef} autoPlay
-               className={cn("w-full aspect-video -scale-x-[1]", {"hidden": !isActive})}></video>
-    )
+        <video
+            ref={videoRef}
+            autoPlay
+            muted
+            className={cn("w-full aspect-video -scale-x-[1]", {
+                hidden: !isActive,
+            })}
+        ></video>
+    );
 }
