@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { FullscreenIcon } from 'lucide-react';
-import { toggleFullscreen } from '@/app/redux/slices/fullscreenSlice';
-import { RootState } from '@/app/redux/store';
-import { useAppDispatch } from '@/app/redux/hooks';
+import { toggleFullscreen } from '@/redux/slices/fullscreenSlice';
+import { RootState } from '@/redux/store';
+import { useAppDispatch } from '@/redux/hooks';
 
 export default function FullscreenHandler() {
     const isFullscreen = useSelector((state: RootState) => state.fullScreen.isFullscreen);

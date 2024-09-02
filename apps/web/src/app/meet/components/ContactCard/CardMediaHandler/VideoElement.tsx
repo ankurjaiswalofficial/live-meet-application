@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
-import {RootState} from '@/app/redux/store';
+import {RootState} from '@/redux/store';
 import {cn} from '@/lib/utils'
-import {VideoContext} from "@/app/context/videoContext";
+import {VideoContext} from "@/context/videoContext";
 import {useSelector} from "react-redux";
 
 export default function VideoElement() {

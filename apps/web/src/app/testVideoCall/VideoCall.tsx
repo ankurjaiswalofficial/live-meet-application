@@ -1,124 +1,171 @@
 "use client";
-import React, { useRef, useEffect, useState } from 'react';
+
+import React, { useRef, useState, useEffect } from "react";
 
 const VideoCall: React.FC = () => {
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+    const localVideo = useRef<HTMLVideoElement | null>(null);
+    const remoteVideo = useRef<HTMLVideoElement | null>(null);
+    const callButton = useRef<HTMLButtonElement | null>(null);
 
-  const signalingServerUrl = 'ws://localhost:8080';
-  const signalingSocket = useRef<WebSocket>(new WebSocket(signalingServerUrl));
+    const [socket] = useState(() => new WebSocket("ws://localhost:8080"));
+    const [peerConnection, setPeerConnection] =
+        useState<RTCPeerConnection | null>(null);
+    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+    const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 
-  const config: RTCConfiguration = {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' }, // STUN server
-    ],
-  };
-
-  useEffect(() => {
-    signalingSocket.current.onmessage = async (message) => {
-      const data = JSON.parse(message.data);
-
-      if (data.offer) {
-        await handleOffer(data.offer);
-      } else if (data.answer) {
-        await handleAnswer(data.answer);
-      } else if (data.iceCandidate) {
-        await handleICECandidate(data.iceCandidate);
-      }
+    const startVideo = async () => {
+        try {
+            const stream: MediaStream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                });
+            setLocalStream(stream);
+            if (localVideo.current) {
+                localVideo.current.srcObject = stream;
+            }
+        } catch (error) {
+            console.error("Error accessing media devices:", error);
+        }
     };
 
-    startLocalStream();
-  }, []);
-
-  const startLocalStream = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      setLocalStream(stream);
-
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
-
-      createPeerConnection(stream);
-    } catch (error) {
-      console.error('Error accessing media devices.', error);
-    }
-  };
-
-  const createPeerConnection = (stream: MediaStream) => {
-    const pc = new RTCPeerConnection(config);
-
-    // Add local stream tracks to the peer connection
-    stream.getTracks().forEach((track) => {
-      pc.addTrack(track, stream);
-    });
-
-    // Handle remote stream
-    pc.ontrack = (event) => {
-      if (remoteVideoRef.current && remoteVideoRef.current.srcObject !== event.streams[0]) {
-        remoteVideoRef.current.srcObject = event.streams[0];
-      }
+    const handleIceCandidate = (event: RTCPeerConnectionIceEvent) => {
+        if (event.candidate) {
+            socket.send(
+                JSON.stringify({
+                    type: "iceCandidate",
+                    candidate: event.candidate,
+                })
+            );
+        }
     };
 
-    // Send ICE candidates to the signaling server
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        signalingSocket.current.send(JSON.stringify({ iceCandidate: event.candidate }));
-      }
+    const handleOfferReceived = async (offer: RTCSessionDescriptionInit) => {
+        if (!peerConnection) return;
+        await peerConnection.setRemoteDescription(
+            new RTCSessionDescription(offer)
+        );
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        socket.send(JSON.stringify({ type: "answer", answer }));
     };
 
-    setPeerConnection(pc);
-  };
+    const handleAnswerReceived = async (answer: RTCSessionDescriptionInit) => {
+        if (!peerConnection) return;
+        await peerConnection.setRemoteDescription(
+            new RTCSessionDescription(answer)
+        );
+    };
 
-  const createOffer = async () => {
-    if (peerConnection) {
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-      signalingSocket.current.send(JSON.stringify({ offer: peerConnection.localDescription }));
-    }
-  };
+    const handleDataChannelMessage = (event: MessageEvent) => {
+        console.log("Received message:", event.data);
+    };
 
-  const handleOffer = async (offer: RTCSessionDescriptionInit) => {
-    if (!peerConnection) {
-      startLocalStream(); // Ensure we have a peer connection ready
-    }
+    const handleConnectionStateChanged = (event: Event) => {
+        if (
+            (event.target as RTCPeerConnection).iceConnectionState ===
+            "connected"
+        ) {
+            console.log("Connection established");
+        }
+    };
 
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      signalingSocket.current.send(JSON.stringify({ answer: peerConnection.localDescription }));
-    }
-  };
+    const handleError = (error: Error) => {
+        console.error("Error:", error);
+    };
 
-  const handleAnswer = async (answer: RTCSessionDescriptionInit) => {
-    if (peerConnection) {
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-    }
-  };
+    const initPeerConnection = () => {
+        const configuration: RTCConfiguration = {
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        };
 
-  const handleICECandidate = async (candidate: RTCIceCandidateInit) => {
-    try {
-      if (peerConnection) {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-      }
-    } catch (error) {
-      console.error('Error adding received ICE candidate', error);
-    }
-  };
+        const newPeerConnection = new RTCPeerConnection(configuration);
 
-  return (
-    <div>
-      <h1>WebRTC Video Call</h1>
-      <video ref={localVideoRef} autoPlay muted style={{ width: '300px', height: '200px', border: '1px solid black' }} />
-      <video ref={remoteVideoRef} autoPlay style={{ width: '300px', height: '200px', border: '1px solid black' }} />
-      <div>
-        <button onClick={createOffer}>Call</button>
-      </div>
-    </div>
-  );
+        newPeerConnection.onicecandidate = handleIceCandidate;
+        newPeerConnection.ontrack = (event: RTCTrackEvent) => {
+            const [stream] = event.streams;
+            setRemoteStream(stream);
+        };
+        newPeerConnection.onnegotiationneeded = async () => {
+            try {
+                const offer = await newPeerConnection.createOffer();
+                await newPeerConnection.setLocalDescription(offer);
+                socket.send(JSON.stringify({ type: "offer", offer }));
+            } catch (error) {
+                handleError(error);
+            }
+        };
+        newPeerConnection.onsignalingstatechange = handleConnectionStateChanged;
+        newPeerConnection.oniceconnectionstatechange =
+            handleConnectionStateChanged;
+        newPeerConnection.ondatachannel = (event: RTCDataChannelEvent) => {
+            const dataChannel = event.channel;
+            dataChannel.onmessage = handleDataChannelMessage;
+        };
+
+        setPeerConnection(newPeerConnection);
+    };
+
+    const handleCallBtn = () => {
+        if (peerConnection && localStream) {
+            localStream
+                .getTracks()
+                .forEach((track) =>
+                    peerConnection.addTrack(track, localStream)
+                );
+        } else {
+            console.error("Peer connection not initialized yet!");
+        }
+    };
+
+    useEffect(() => {
+        startVideo();
+        initPeerConnection();
+    }, []);
+
+    // useEffect(
+    //   () => {
+    //     if (peerConnection && localStream) {
+    //       localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+    //     } else {
+    //       console.error('Peer connection not initialized yet!');
+    //     }
+    //   }, []);
+
+    useEffect(() => {
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            switch (message.type) {
+                case "offer":
+                    handleOfferReceived(message.offer);
+                    break;
+                case "answer":
+                    handleAnswerReceived(message.answer);
+                    break;
+                case "iceCandidate":
+                    peerConnection?.addIceCandidate(
+                        new RTCIceCandidate(message.candidate)
+                    );
+                    break;
+            }
+        };
+    }, [peerConnection]);
+
+    useEffect(() => {
+        if (remoteStream && remoteVideo.current) {
+            remoteVideo.current.srcObject = remoteStream;
+        }
+    }, [remoteStream]);
+
+    return (
+        <div>
+            <video ref={localVideo} autoPlay playsInline />
+            <video ref={remoteVideo} autoPlay playsInline />
+            <button ref={callButton} onClick={handleCallBtn}>
+                Call
+            </button>
+        </div>
+    );
 };
 
 export default VideoCall;

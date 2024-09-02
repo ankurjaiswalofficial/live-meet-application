@@ -1,11 +1,11 @@
 import React, {RefObject, useContext} from 'react'
-import {RootState} from "@/app/redux/store";
+import {RootState} from "@/redux/store";
 import {Video, VideoOff} from 'lucide-react'
 import TooltipIconButton from '@/components/TooltipIconButton'
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/app/redux/hooks";
-import {toggleVideo} from "@/app/redux/slices/videoSlice";
-import {VideoContext} from "@/app/context/videoContext";
+import {useAppDispatch} from "@/redux/hooks";
+import {toggleVideo} from "@/redux/slices/videoSlice";
+import {VideoContext} from "@/context/videoContext";
 
 
 export default function VideoHandler() {

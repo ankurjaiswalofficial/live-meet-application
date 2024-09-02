@@ -19,6 +19,8 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "tsc-watch": "^6.2.0"
+    "@types/uuid": "^10.0.0",
+    "tsc-watch": "^6.2.0",
+    "uuid": "^10.0.0"
   }
 }

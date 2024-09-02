@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
 import { cn } from '@/lib/utils';
 
-interface TooltipIconButtonProps { title: string, className?: string, onClick?: () => void, children: ReactNode, disabled?: boolean, active?: boolean, required?: boolean, ghost?: boolean }
+interface TooltipIconButtonProps { title: string, className?: string, onClick?: VoidFunction, children: ReactNode, disabled?: boolean, active?: boolean, required?: boolean, ghost?: boolean }
 
 function TooltipIconButton({ title, className, onClick, children, disabled = false, active = false, required = false, ghost = false }: Readonly<TooltipIconButtonProps>) {
 

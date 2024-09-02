@@ -1,11 +1,11 @@
 import React, {RefObject, useContext} from 'react'
-import {RootState} from '@/app/redux/store';
+import {RootState} from '@/redux/store';
 import TooltipIconButton from '@/components/TooltipIconButton'
 import {Mic, MicOff} from 'lucide-react'
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/app/redux/hooks";
-import {toggleAudio} from "@/app/redux/slices/audioSlice";
-import {AudioContext} from "@/app/context/audioContext";
+import {useAppDispatch} from "@/redux/hooks";
+import {toggleAudio} from "@/redux/slices/audioSlice";
+import {AudioContext} from "@/context/audioContext";
 
 export default function AudioHandler() {
     const audioRef = useContext<RefObject<HTMLAudioElement> | null>(AudioContext);

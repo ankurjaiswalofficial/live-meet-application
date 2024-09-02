@@ -1,11 +1,10 @@
 "use client";
-import {RootState} from '@/app/redux/store';
+import {RootState} from '@/redux/store';
 import {Separator} from '@/components/ui/separator'
-import dayjs from 'dayjs';
 import React, {useState} from 'react'
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/app/redux/hooks";
-import {timeSliceActions, updateTime} from "@/app/redux/slices/timeSlice";
+import {useAppDispatch} from "@/redux/hooks";
+import {timeSliceActions, updateTime} from "@/redux/slices/timeSlice";
 
 interface MeetInfoProps {
     meetingCode: string;

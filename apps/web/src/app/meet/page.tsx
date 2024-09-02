@@ -3,17 +3,16 @@ import React from 'react';
 import ActionFooter from "./components/ActionFooter/ActionFooter";
 import MeetBase from "./MeetBase";
 import MeetDisplay from "./MeetDisplay";
-import { Provider } from 'react-redux';
-import store from '../redux/store';
+import { SocketContextProvider } from '@/context/socketContext';
 
 function Meet() {
     return (
-        <Provider store={store}>
+        <SocketContextProvider>
             <MeetBase>
                 <MeetDisplay />
                 <ActionFooter />
             </MeetBase>
-        </Provider>
+        </SocketContextProvider>
     );
 }
 

@@ -1,6 +1,6 @@
 import {cn} from '@/lib/utils'
 import {useContext} from "react";
-import {AudioContext} from "@/app/context/audioContext";
+import {AudioContext} from "@/context/audioContext";
 
 export default function AudioElement() {
     const audioRef = useContext(AudioContext);
