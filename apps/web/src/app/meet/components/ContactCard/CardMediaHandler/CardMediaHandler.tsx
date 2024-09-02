@@ -6,16 +6,16 @@ import VideoElement, { VideoElementProps } from "./VideoElement";
 export interface CardMediaHandlerProps {
     audioActive: boolean;
     videoActive: boolean;
-    audioRef: AudioElementProps["audioRef"];
-    videoRef: VideoElementProps["videoRef"];
+    audioStream: AudioElementProps["audioStream"];
+    videoStream: VideoElementProps["videoStream"];
     muted?: boolean;
 }
 
 export default function CardMediaHandler({
     audioActive,
     videoActive,
-    audioRef,
-    videoRef,
+    audioStream,
+    videoStream,
     muted,
 }: Readonly<CardMediaHandlerProps>) {
     const isVisible = useMemo(() => {
@@ -29,8 +29,8 @@ export default function CardMediaHandler({
                 { invisible: !isVisible }
             )}
         >
-            <VideoElement isActive={videoActive} videoRef={videoRef} />
-            <AudioElement muted={muted} audioRef={audioRef} />
+            <VideoElement isActive={videoActive} videoStream={videoStream} />
+            <AudioElement muted={muted} audioStream={audioStream} />
         </div>
     );
 }

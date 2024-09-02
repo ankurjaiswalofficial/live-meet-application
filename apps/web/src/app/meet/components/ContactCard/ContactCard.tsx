@@ -9,22 +9,22 @@ import CardMediaHandler, {
     CardMediaHandlerProps,
 } from "./CardMediaHandler/CardMediaHandler";
 
-interface UserData {
+export interface UserData {
     username: string;
     email: string;
     imgSrc?: string | null;
     userId: string;
 }
 
-interface ContactCardProps extends CardMediaHandlerProps {
+export interface ContactCardProps extends CardMediaHandlerProps {
     userData: UserData;
 }
 
 export default function ContactCard({
     audioActive,
     videoActive,
-    audioRef,
-    videoRef,
+    audioStream,
+    videoStream,
     muted,
     userData,
 }: Readonly<ContactCardProps>) {
@@ -43,8 +43,8 @@ export default function ContactCard({
                 audioActive={audioActive}
                 videoActive={videoActive}
                 muted={muted}
-                audioRef={audioRef}
-                videoRef={videoRef}
+                audioStream={audioStream}
+                videoStream={videoStream}
             />
             <TinyIconTag
                 className=""

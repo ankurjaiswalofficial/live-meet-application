@@ -1,20 +1,21 @@
-import React, {RefObject, useContext} from 'react'
-import {RootState} from "@/redux/store";
-import {Video, VideoOff} from 'lucide-react'
+import React, { RefObject, useContext } from 'react'
+import { RootState } from "@/redux/store";
+import { Video, VideoOff } from 'lucide-react'
 import TooltipIconButton from '@/components/TooltipIconButton'
-import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/redux/hooks";
-import {toggleVideo} from "@/redux/slices/videoSlice";
-import {VideoContext} from "@/context/videoContext";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "@/redux/hooks";
+import { toggleVideo } from "@/redux/slices/videoSlice";
+import { VideoContext, VideoContextType } from "@/context/videoContext";
 
 
 export default function VideoHandler() {
-    const videoRef = useContext<RefObject<HTMLVideoElement> | null >(VideoContext);
+    const videoContext = useContext<VideoContextType | null>(VideoContext);
     const isActive: boolean = useSelector((state: RootState) => state.videoHandler.isActive);
     const dispatch = useAppDispatch();
     const handleVideoActive = () => {
-        console.log("Mic Clicked state => ", isActive);
-        dispatch(toggleVideo(videoRef));
+        console.log("Camera Clicked before state => ", isActive);
+        if (videoContext) { dispatch(toggleVideo(videoContext)); }
+        console.log("Camera Clicked after state => ", isActive);
     }
     return (
         <TooltipIconButton
@@ -25,9 +26,9 @@ export default function VideoHandler() {
             onClick={handleVideoActive}
         >
             {isActive ? (
-                <Video className="h-5 w-5"/>
+                <Video className="h-5 w-5" />
             ) : (
-                <VideoOff className="h-5 w-5"/>
+                <VideoOff className="h-5 w-5" />
             )}
         </TooltipIconButton>
     )

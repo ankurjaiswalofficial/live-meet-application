@@ -1,5 +1,6 @@
-import {RefObject} from "react";
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { RefObject } from "react";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AudioContextType } from "@/context/audioContext";
 
 interface AudioState {
     isActive: boolean;
@@ -17,16 +18,16 @@ const initialState: AudioState = {
 
 const toggleAudio = createAsyncThunk(
     "audioSlice/toggleAudio",
-    async (audioRef: RefObject<HTMLAudioElement> | null, {getState}) => {
+    async ({ audioStream, setAudioStream }: AudioContextType, { getState }) => {
         const state = getState() as { audioHandler: { isActive: boolean, } };
-        console.log("Triggered toggleAudio() func and audioref is", audioRef, getState());
+        console.log("Triggered toggleAudio() func and audioref is", audioStream, getState());
 
         if (state.audioHandler.isActive) {
             console.log("inside active audio");
-            if (audioRef?.current && audioRef?.current.srcObject) {
-                const audioStream = audioRef?.current.srcObject as MediaStream;
+            if (audioStream) {
                 const audioTracks = audioStream.getTracks();
                 audioTracks.forEach((track) => track.stop());
+                setAudioStream(null);
                 return false;
             }
         } else {
@@ -35,15 +36,14 @@ const toggleAudio = createAsyncThunk(
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
                     audio: true,
                 });
-                if (audioRef?.current) {
-                    audioRef.current.srcObject = mediaStream;
-                    await audioRef.current.play();
-                    return true;
-                }
+                setAudioStream(mediaStream);
+                return true;
+
             } catch (error) {
                 console.error("Error accessing audio media device:", error);
             }
         }
+        setAudioStream(null);
         return false;
     }
 );
@@ -83,7 +83,7 @@ const audioSlice = createSlice({
     },
 });
 
-export {toggleAudio};
+export { toggleAudio };
 export const audioSliceReducer = audioSlice.reducer;
 export const audioSliceActions = audioSlice.actions;
 

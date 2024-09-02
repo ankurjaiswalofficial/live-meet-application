@@ -8,8 +8,7 @@ const VideoCall: React.FC = () => {
     const callButton = useRef<HTMLButtonElement | null>(null);
 
     const [socket] = useState(() => new WebSocket("ws://localhost:8080"));
-    const [peerConnection, setPeerConnection] =
-        useState<RTCPeerConnection | null>(null);
+    const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
 

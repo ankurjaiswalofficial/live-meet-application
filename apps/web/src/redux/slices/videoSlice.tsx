@@ -1,5 +1,6 @@
 import {RefObject} from "react";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { VideoContextType } from "@/context/videoContext";
 
 interface AudioState {
     isActive: boolean;
@@ -17,16 +18,16 @@ const initialState: AudioState = {
 
 const toggleVideo = createAsyncThunk(
     "videoSlice/toggleVideo",
-    async (videoRef: RefObject<HTMLVideoElement> | null, {getState}) => {
+    async ({videoStream, setVideoStream}: VideoContextType, {getState}) => {
         const state = getState() as { videoHandler: { isActive: boolean, } };
-        console.log("Triggered toggleVideo() func and videoref is", videoRef, getState());
+        console.log("Triggered toggleVideo() func and videoref is", videoStream, getState());
 
         if (state.videoHandler.isActive) {
             console.log("inside active video");
-            if (videoRef?.current && videoRef?.current.srcObject) {
-                const videoStream = videoRef?.current.srcObject as MediaStream;
+            if (videoStream) {
                 const videoTracks = videoStream.getTracks();
                 videoTracks.forEach((track) => track.stop());
+                setVideoStream(null);
                 return false;
             }
         } else {
@@ -35,15 +36,13 @@ const toggleVideo = createAsyncThunk(
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
                     video: true,
                 });
-                if (videoRef?.current) {
-                    videoRef.current.srcObject = mediaStream;
-                    await videoRef.current.play();
-                    return true;
-                }
+                setVideoStream(mediaStream);
+                return true;
             } catch (error) {
                 console.error("Error accessing video media device:", error);
             }
         }
+        setVideoStream(null);
         return false;
     }
 );
@@ -78,7 +77,7 @@ const videoSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(toggleVideo.fulfilled, (state, action: PayloadAction<boolean>) => {
-            state.isActive = action.payload;
+            state.isActive = action.payload
         });
     },
 });

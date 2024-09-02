@@ -29,3 +29,17 @@ export function generateCustomUUID(): string {
   const uuid = `${getRandomLetters()}-${getRandomLetters()}-${getRandomLetters()}`;
   return uuid;
 }
+
+export function generateFakeUser(): string {
+  const getRandomLetters = (): string => {
+    let result = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    for (let i = 0; i < 3; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  };
+
+  const uuid = `_Fake${getRandomLetters()}Fake${getRandomLetters()}Fake`
+  return uuid;
+}

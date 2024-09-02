@@ -1,18 +1,20 @@
 "use client";
-import React, {createContext, ReactNode, RefObject, useRef} from "react";
+import React, { createContext, ReactNode, useMemo, useState } from "react";
 
+type VideoContextType = { videoStream: MediaStream | null; setVideoStream: React.Dispatch<React.SetStateAction<MediaStream | null>> }
+const VideoContext = createContext<VideoContextType | null>(null);
 
-const VideoContext = createContext<RefObject<HTMLVideoElement> | null>(null);
-
-const VideoContextProvider = ({children}:Readonly<{ children: ReactNode }>) => {
-    const videoRef = useRef(null);
-
+const VideoContextProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
+    const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+    const contextValue = useMemo(
+        () => { return { videoStream, setVideoStream } }, [videoStream]
+    )
     return (
-        <VideoContext.Provider value={videoRef}>
+        <VideoContext.Provider value={contextValue}>
             {children}
         </VideoContext.Provider>
     )
 }
 
 
-export {VideoContext, VideoContextProvider};
+export { VideoContext, type VideoContextType, VideoContextProvider };

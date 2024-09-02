@@ -1,15 +1,24 @@
-import React, { MutableRefObject } from "react";
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export interface VideoElementProps {
     isActive: boolean;
-    videoRef: MutableRefObject<HTMLVideoElement> | null;
+    videoStream?: MediaStream | null;
 }
 
 export default function VideoElement({
     isActive,
-    videoRef,
+    videoStream,
 }: Readonly<VideoElementProps>) {
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    useEffect(
+        () => {
+            if (videoStream && videoRef.current) {
+                videoRef.current.srcObject = videoStream;
+            }
+        },
+        [videoStream]
+    )
     return (
         <video
             ref={videoRef}

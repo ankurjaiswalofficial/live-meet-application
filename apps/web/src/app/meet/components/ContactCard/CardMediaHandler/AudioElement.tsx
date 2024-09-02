@@ -1,15 +1,24 @@
+import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { MutableRefObject } from "react";
 
 export interface AudioElementProps {
     muted?: boolean;
-    audioRef: MutableRefObject<HTMLAudioElement> | null;
+    audioStream?: MediaStream | null;
 }
 
 export default function AudioElement({
     muted,
-    audioRef,
+    audioStream,
 }: Readonly<AudioElementProps>) {
+    const audioRef = useRef<HTMLVideoElement | null>(null);
+    useEffect(
+        () => {
+            if (audioStream && audioRef.current) {
+                audioRef.current.srcObject = audioStream;
+            }
+        },
+        [audioStream]
+    )
     return (
         <audio
             muted={muted ?? false}

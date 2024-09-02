@@ -8,274 +8,100 @@ import React, {
     useContext,
     useState,
     useEffect,
-    useCallback,
 } from "react";
 import { VideoContext } from "./videoContext";
 import { AudioContext } from "./audioContext";
 import { ScreenContext } from "./screenContext";
+import { UserData } from "@/app/meet/components/ContactCard/ContactCard";
+import { UserContext } from "./userContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { useAppDispatch } from "@/redux/hooks";
+import { toggleAudio } from "@/redux/slices/audioSlice";
+import { toggleVideo } from "@/redux/slices/videoSlice";
 
-type SocketStream = {
-    audio: MediaStream | null | undefined;
-    video: MediaStream | null | undefined;
-    display: MediaStream | null | undefined;
+interface SocketStream {
+    peerId: string;
+    userData: UserData;
+    meetId: string;
+    audioStream?: MediaStream | null;
+    videoStream?: MediaStream | null;
+    audioActive?: boolean;
+    videoActive?: boolean;
+    // screenAudioStream?: MediaStream | null;
+    // screenVideoStream?: MediaStream | null;
+    // screenAudioActive?: boolean;
+    // screenVideoActive?: boolean;
 };
 
-type SocketContextType = {
+interface SocketContextType {
     localStream: SocketStream;
     remoteStream: SocketStream[];
     wsRef: MutableRefObject<WebSocket | null>;
-    peerConnectionRef: MutableRefObject<RTCPeerConnection | null>;
+    pcRef: MutableRefObject<RTCPeerConnection | null>;
 };
 
 const SocketContext = createContext<SocketContextType | null>(null);
 
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
-    const audioRef = useContext(AudioContext);
-    const videoRef = useContext(VideoContext);
-    const screenRef = useContext(ScreenContext);
+    const userData = useContext(UserContext);
+    const [peerId, setPeerId] = useState<string | null>(null);
+    const meetId = "wer-453-rtg";
+    const audioContext = useContext(AudioContext);
+    const videoContext = useContext(VideoContext);
+    const audioActive = useSelector((state: RootState) => state.audioHandler.isActive);
+    const videoActive = useSelector((state: RootState) => state.videoHandler.isActive);
+    const [localStream, setLocalStream] = useState<SocketStream | null>(null);
+    const [remoteStream, setRemoteStream] = useState<SocketStream[]>([]);
+    const dispatch = useAppDispatch();
 
-    const [localStream, setLocalStream] = useState<SocketStream>({
-        audio: null,
-        video: null,
-        display: null,
-    });
+    useEffect(
+        () => {
+            setPeerId(userData?.userId ?? null);
+        }, [userData]
+    )
 
-    const [remoteStream, setRemoteStream] = useState<Array<SocketStream>>([]);
-    const wsRef = useRef<WebSocket | null>(null);
-    const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
-    const startMediaCapture = useCallback(() => {
-        console.log("Starting media capture...");
-
-        const newLocalStream: SocketStream = {
-            audio: audioRef?.current?.srcObject as MediaStream,
-            video: videoRef?.current?.srcObject as MediaStream,
-            display: screenRef?.current?.srcObject as MediaStream,
-        };
-
-        console.log("New local stream", newLocalStream);
-
-        setLocalStream(newLocalStream);
-    }, [
-        audioRef?.current?.srcObject,
-        videoRef?.current?.srcObject,
-        screenRef?.current?.srcObject,
-    ]);
-
-    const handleIceCandidate = (event: RTCPeerConnectionIceEvent) => {
-        if (event.candidate && wsRef.current) {
-            wsRef.current.send(
-                JSON.stringify({
-                    type: "iceCandidate",
-                    candidate: event.candidate,
+    useEffect(
+        () => {
+            if (peerId && userData) {
+                setLocalStream({
+                    peerId: peerId,
+                    userData: userData,
+                    meetId: meetId,
+                    audioActive: audioActive,
+                    videoActive: videoActive,
+                    audioStream: audioContext?.audioStream,
+                    videoStream: videoContext?.videoStream,
                 })
-            );
-        }
-    };
-
-    const handleOfferReceived = async (offer: RTCSessionDescriptionInit) => {
-        if (!peerConnectionRef.current) return;
-        await peerConnectionRef.current.setRemoteDescription(
-            new RTCSessionDescription(offer)
-        );
-        const answer = await peerConnectionRef.current.createAnswer();
-        await peerConnectionRef.current.setLocalDescription(answer);
-        wsRef.current?.send(JSON.stringify({ type: "answer", answer }));
-    };
-
-    const handleAnswerReceived = async (answer: RTCSessionDescriptionInit) => {
-        if (!peerConnectionRef.current) return;
-        await peerConnectionRef.current.setRemoteDescription(
-            new RTCSessionDescription(answer)
-        );
-    };
-
-    const handleDataChannelMessage = (event: MessageEvent) => {
-        console.log("Received message:", event.data);
-    };
-
-    const handleConnectionStateChanged = (event: Event) => {
-        if (
-            (event.target as RTCPeerConnection).iceConnectionState ===
-            "connected"
-        ) {
-            console.log("Connection State Changed");
-        }
-    };
-
-    const handleError = (error: any) => {
-        console.error("Error:", error);
-    };
-
-    const initPeerConnection = () => {
-        const configuration: RTCConfiguration = {
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-        };
-
-        const newPeerConnection = new RTCPeerConnection(configuration);
-        console.log("Peer Initialized");
-
-        newPeerConnection.onicecandidate = handleIceCandidate;
-        newPeerConnection.ontrack = (event: RTCTrackEvent) => {
-            const [stream] = event.streams;
-
-            const audioStream = new MediaStream();
-            const videoStream = new MediaStream();
-
-            stream
-                .getAudioTracks()
-                .forEach((track) => audioStream.addTrack(track));
-            stream
-                .getVideoTracks()
-                .forEach((track) => videoStream.addTrack(track));
-
-            setRemoteStream((prevStreams) => [
-                ...prevStreams,
-                {
-                    audio: audioStream,
-                    video: videoStream,
-                    display: null,
-                },
-            ]);
-        };
-        newPeerConnection.onnegotiationneeded = async () => {
-            try {
-                const offer = await newPeerConnection.createOffer();
-                await newPeerConnection.setLocalDescription(offer);
-                wsRef.current?.send(JSON.stringify({ type: "offer", offer }));
-            } catch (error) {
-                handleError(error);
             }
-        };
-        newPeerConnection.onsignalingstatechange = handleConnectionStateChanged;
-        newPeerConnection.oniceconnectionstatechange =
-            handleConnectionStateChanged;
-        newPeerConnection.ondatachannel = (event: RTCDataChannelEvent) => {
-            const dataChannel = event.channel;
-            dataChannel.onmessage = handleDataChannelMessage;
-        };
+        },
+        [peerId, userData, audioActive, audioContext?.audioStream, videoActive, videoContext?.videoStream]
+    )
 
-        peerConnectionRef.current = newPeerConnection;
-        console.log("Peer Connection Init Success", newPeerConnection);
-    };
 
-    useEffect(() => {
-        if (localStream.audio || localStream.video || localStream.display) {
-            console.log("Local stream has been updated:", localStream);
-        }
-    }, [localStream]);
+    const wsRef = useRef<WebSocket | null>(null);
+    const pcRef = useRef<RTCPeerConnection | null>(null);
 
-    const handleCallBtn = () => {
-        if (!peerConnectionRef.current) {
-            handleError("Peer connection not initialized yet!");
-            return;
-        }
-        startMediaCapture();
-        if (localStream.video) {
-            try {
-                localStream.video
-                    .getTracks()
-                    .forEach((track: MediaStreamTrack) => {
-                        peerConnectionRef.current?.addTrack(
-                            track,
-                            localStream.video as MediaStream
-                        );
-                        console.log("Video tracks added to peer connection.");
-                    });
-            } catch (e: any) {
-                handleError(e);
-            }
-        } else {
-            handleError("No video stream available.");
-        }
-
-        if (localStream.audio) {
-            try {
-                localStream.audio
-                    .getTracks()
-                    .forEach((track: MediaStreamTrack) => {
-                        peerConnectionRef.current?.addTrack(
-                            track,
-                            localStream.audio as MediaStream
-                        );
-                    });
-                console.log("Audio tracks added to peer connection.");
-            } catch (e: any) {
-                handleError(e);
-            }
-        } else {
-            handleError("No audio stream available.");
-        }
-
-        if (localStream.display) {
-            try {
-                localStream.display
-                    .getTracks()
-                    .forEach((track: MediaStreamTrack) => {
-                        peerConnectionRef.current?.addTrack(
-                            track,
-                            localStream.display as MediaStream
-                        );
-                    });
-                console.log("Display tracks added to peer connection.");
-            } catch (e: any) {
-                handleError(e);
-            }
-        } else {
-            handleError("No display stream available.");
-        }
-    };
-
-    useEffect(() => {
-        startMediaCapture();
-    }, [startMediaCapture]);
-
-    useEffect(() => {
-        wsRef.current = new WebSocket("ws://localhost:8080");
-        console.log("WebSocket Connected");
-        wsRef.current.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            switch (message.type) {
-                case "offer":
-                    handleOfferReceived(message.offer);
-                    break;
-                case "answer":
-                    handleAnswerReceived(message.answer);
-                    break;
-                case "iceCandidate":
-                    peerConnectionRef.current?.addIceCandidate(
-                        new RTCIceCandidate(message.candidate)
-                    );
-                    break;
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        startMediaCapture();
-        initPeerConnection();
-    }, []);
-
-    useEffect(() => {
-        if (remoteStream.length > 0) {
-            console.log("Remote Stream", remoteStream);
-            // remoteVideo.current.srcObject = remoteStream[0].video; // Example to handle remote video stream
-        }
-    }, [remoteStream]);
 
     const contextValue = useMemo(
-        () => ({
+        () => (localStream
+            && {
             localStream,
             remoteStream,
             wsRef,
-            peerConnectionRef,
-        }),
-        [localStream, remoteStream, wsRef, peerConnectionRef]
+            pcRef,
+        }
+        ), [localStream, remoteStream, wsRef, pcRef]
     );
 
+    useEffect(
+        () => console.log(contextValue),
+        [contextValue]
+    )
+    if (!peerId) return;
     return (
         <SocketContext.Provider value={contextValue}>
-            <button onClick={handleCallBtn}>Call Button</button>
             {children}
         </SocketContext.Provider>
     );
