@@ -16,32 +16,36 @@ wss.on('connection', function (ws) {
       const data = JSON.parse(message.toString());
 
       switch (data.type) {
+        case "new-peer":
+          console.log("New Offer received");
+           wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(data));
+            }
+          });
+          break;
         case "offer":
           console.log("Offer received");
-          // Broadcast the offer to all connected clients except the sender
-          wss.clients.forEach(function each(client) {
+           wss.clients.forEach(function each(client) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "offer", offer: data.offer }));
+              client.send(JSON.stringify(data));
             }
           });
           break;
-
         case "answer":
           console.log("Answer received");
-          // Broadcast the answer to all connected clients except the sender
-          wss.clients.forEach(function each(client) {
+           wss.clients.forEach(function each(client) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "answer", answer: data.answer }));
+              client.send(JSON.stringify(data));
             }
           });
           break;
-
-        case "iceCandidate":
+        case "ice-candidate":
           console.log("ICE Candidate received");
-          // Broadcast the ICE candidate to all connected clients except the sender
+          // Broadcast the message to all connected clients except the sender
           wss.clients.forEach(function each(client) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: "iceCandidate", candidate: data.candidate }));
+              client.send(JSON.stringify(data));
             }
           });
           break;

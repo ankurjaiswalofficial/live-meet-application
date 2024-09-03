@@ -12,8 +12,7 @@ export interface RemoteDataProps {
 export interface RemoteCardProps { remoteData: RemoteDataProps };
 
 function RemoteCard({ remoteData }: Readonly<RemoteCardProps>) {
-    const audioRef = useRef<RefObject<HTMLAudioElement> | null>(null);
-    
+
     return (
         <ContactCard
             audioActive={remoteData.audioActive}
