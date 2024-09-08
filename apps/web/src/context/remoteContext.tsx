@@ -1,19 +1,21 @@
 "use client";
-import { RemoteDataProps } from "@/app/meet/components/ContactCard/RemoteCard";
-import React, {createContext, ReactNode, useRef} from "react";
+import { RemoteContextProps } from "@/types/card-types";
+import React, { createContext, ReactNode, useMemo, useState } from "react";
 
+const RemoteContext = createContext<RemoteContextProps | null>(null);
 
-const RemoteContext = createContext<RemoteDataProps[]>([]);
+const RemoteContextProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
+    const [remoteContent, setRemoteContent] = useState<RemoteContextProps["remoteContent"]>({});
 
-const RemoteContextProvider = ({children}:Readonly<{ children: ReactNode }>) => {
-    const remoteRef = useRef<RemoteDataProps[]>([]);
+    const contextValue = useMemo(() => {
+        return { remoteContent, setRemoteContent };
+    }, [remoteContent]);
 
     return (
-        <RemoteContext.Provider value={remoteRef.current}>
+        <RemoteContext.Provider value={contextValue}>
             {children}
         </RemoteContext.Provider>
-    )
-}
+    );
+};
 
-
-export {RemoteContext, RemoteContextProvider};
+export { RemoteContext, RemoteContextProvider };

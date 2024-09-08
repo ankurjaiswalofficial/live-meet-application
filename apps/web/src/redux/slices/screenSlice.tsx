@@ -1,18 +1,12 @@
 import {RefObject} from "react";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { MediaStateInterface } from "@/types/media-types";
 
-interface ScreenState {
-    isActive: boolean;
-    isRecording: boolean;
-    screenUrl: string | null;
-    screenBlob: Blob | null;
-}
-
-const initialState: ScreenState = {
+const initialState: MediaStateInterface = {
     isActive: false,
     isRecording: false,
-    screenUrl: null,
-    screenBlob: null,
+    url: null,
+    blob: null,
 };
 
 const toggleScreen = createAsyncThunk(
@@ -22,7 +16,6 @@ const toggleScreen = createAsyncThunk(
         console.log("Triggered toggleScreen() func and screenref is", screenRef, getState());
 
         if (state.screenHandler.isActive) {
-            console.log("inside active screen");
             if (screenRef?.current && screenRef?.current.srcObject) {
                 const screenStream = screenRef?.current.srcObject as MediaStream;
                 const screenTracks = screenStream.getTracks();
@@ -30,7 +23,6 @@ const toggleScreen = createAsyncThunk(
                 return false;
             }
         } else {
-            console.log("inside inactive screen");
             try {
                 const displayMediaOptions: DisplayMediaStreamOptions = {
                     // video: {
@@ -75,14 +67,14 @@ const screenSlice = createSlice({
         },
         stopRecording: (state, action: PayloadAction<Blob>) => {
             state.isRecording = false;
-            state.screenBlob = action.payload;
-            state.screenUrl = URL.createObjectURL(action.payload);
+            state.blob = action.payload;
+            state.url = URL.createObjectURL(action.payload);
         },
         resetScreen: (state) => {
             state.isActive = false;
             state.isRecording = false;
-            state.screenUrl = null;
-            state.screenBlob = null;
+            state.url = null;
+            state.blob = null;
         },
     },
     extraReducers: (builder) => {

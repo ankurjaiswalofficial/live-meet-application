@@ -1,23 +1,24 @@
 "use client";
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import { useAppDispatch } from "@/redux/hooks";
-import { socketSliceActions } from "@/redux/slices/socketSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { generateCustomUUID } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { meetSliceActions } from "@/redux/slices/meetSlice";
 
 const MeetInstant = () => {
-    const [meetId, setMeetId] = useState<string | null>(null);
+    // const [meetId, setMeetId] = useState<string | null>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
     const handleInstantMeet = () => {
         const _meetId: string = generateCustomUUID();
-        setMeetId(_meetId);
-        dispatch(socketSliceActions.setMeetId(_meetId));
-        router.push("/" + String(_meetId));
+        // setMeetId(_meetId);
+        dispatch(meetSliceActions.setMeetId(_meetId));
+        // router.push("/" + String(_meetId));
+        router.push("/meet");
     };
 
     return (

@@ -5,33 +5,16 @@ import { Mic, MicOff } from "lucide-react";
 import TinyIconTag from "@/components/TinyIconTag";
 import CardAvatar from "./CardAvatar";
 import CardUserIdentifierTag from "./CardUserIdentifierTag";
-import CardMediaHandler, {
-    CardMediaHandlerProps,
-} from "./CardMediaHandler/CardMediaHandler";
+import CardMediaHandler from "./CardMediaHandler";
+import { UserDataInterface } from "@/types/user-types";
+import { ContactCardProps } from "@/types/card-types";
 
-export interface UserData {
-    username: string;
-    email: string;
-    imgSrc?: string | null;
-    userId: string;
-}
 
-export interface ContactCardProps extends CardMediaHandlerProps {
-    userData: UserData;
-}
-
-export default function ContactCard({
-    audioActive,
-    videoActive,
-    audioStream,
-    videoStream,
-    muted,
-    userData,
-}: Readonly<ContactCardProps>) {
-    const [user, setUser] = React.useState<UserData>(userData);
+export default function ContactCard({ audioActive, videoActive, audioStream, videoStream, userData, muted }: Readonly<ContactCardProps>) {
+    const [user,] = React.useState<UserDataInterface>(userData);
     return (
         <Card
-            id={user.userId}
+            id={user.peerId}
             className="relative flex items-center justify-center rounded-lg bg-neutral-900 border-neutral-800 overflow-hidden min-w-80 min-h-44 w-full h-full"
         >
             <CardAvatar
@@ -42,9 +25,9 @@ export default function ContactCard({
             <CardMediaHandler
                 audioActive={audioActive}
                 videoActive={videoActive}
-                muted={muted}
                 audioStream={audioStream}
                 videoStream={videoStream}
+                muted={muted}
             />
             <TinyIconTag
                 className=""

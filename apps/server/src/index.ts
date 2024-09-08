@@ -1,70 +1,20 @@
-import WebSocket, { WebSocketServer } from "ws";
-import http from "http";
+import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
-const server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse> = http.createServer(function (request: any, response: any) {
-  console.log((new Date()) + 'Received requiest for ' + request.url);
-  response.end("Not a valid server");
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
+const usersToMeet = new Map();
+
+io.on("connection", (socket) => {
+    console.log(`Someone connected to socket server and socket id is ${socket.id}`);
+    socket.on("create-meet", ({meetId, userData}) => {
+        usersToMeet.set(meetId, [socket.id, userData]);
+    })
 })
 
-const wss = new WebSocketServer({ server });
-
-wss.on('connection', function (ws) {
-  console.log("WebSocket Connected");
-
-  ws.on('message', function (message: WebSocket.RawData) {
-    try {
-      const data = JSON.parse(message.toString());
-
-      switch (data.type) {
-        case "new-peer":
-          console.log("New Offer received");
-           wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify(data));
-            }
-          });
-          break;
-        case "offer":
-          console.log("Offer received");
-           wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify(data));
-            }
-          });
-          break;
-        case "answer":
-          console.log("Answer received");
-           wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify(data));
-            }
-          });
-          break;
-        case "ice-candidate":
-          console.log("ICE Candidate received");
-          // Broadcast the message to all connected clients except the sender
-          wss.clients.forEach(function each(client) {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify(data));
-            }
-          });
-          break;
-
-        default:
-          console.log("Unknown message type:", data.type);
-          ws.send(JSON.stringify({ type: "null_data", data: data }))
-          break;
-      }
-
-      console.log("Message data:", data);
-
-    } catch (error) {
-      console.error("Error processing message:", error);
-    }
-  });
+server.listen(8080, () => {
+    console.log(`Server listening on port 8080`);
 });
-
-
-server.listen(8080, function () {
-  console.log((new Date()), "Listening at port 8080")
-})

@@ -2,7 +2,7 @@ import React from 'react'
 import { cn, generateFallbackText } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-interface CardAvatarProps { activeHandler?: boolean, imgSrc?: string, fallbackText?: string }
+interface CardAvatarProps { activeHandler: boolean | null, imgSrc?: string, fallbackText?: string }
 
 export default function CardAvatar({ activeHandler, imgSrc, fallbackText }: Readonly<CardAvatarProps>) {
     return (

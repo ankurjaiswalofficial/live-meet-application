@@ -1,39 +1,34 @@
 "use client";
-
-import React, { useContext } from "react";
-import ContactCard from "./components/ContactCard/ContactCard";
-import { useSelector } from "react-redux";
-import { VideoContext } from "@/context/videoContext";
-import { AudioContext } from "@/context/audioContext";
-import { RootState } from "@/redux/store";
+import React from "react";
+import useMediaStatus from "@/hooks/useMediaStatus";
+import useMedia from "@/hooks/useMedia";
+import useUser from "@/hooks/useUser";
 import RemoteCard from "./components/ContactCard/RemoteCard";
-import { RemoteContext } from "@/context/remoteContext";
-import { UserContext } from "@/context/userContext";
+import ContactCard from "./components/ContactCard/ContactCard";
+import useRemote from "@/hooks/useRemote";
 
 export default function MeetDisplay() {
-    const muted = true;
-    const userContext = useContext(UserContext);
-    const videoContext = useContext(VideoContext);
-    const audioContext = useContext(AudioContext);
-    const remoteContext = useContext(RemoteContext);
-    const audioActive: boolean = useSelector((state: RootState) => state.audioHandler.isActive);
-    const videoActive: boolean = useSelector((state: RootState) => state.videoHandler.isActive);
+    const { userData } = useUser();
+    const { remoteContent } = useRemote();
+    const { videoActive } = useMediaStatus();
+    const { audioStream, videoStream } = useMedia();
 
     return (
         <div className="relative p-4 w-full grid grid-flow-col grid-cols-1 h-[calc(100vh_-_5rem)] gap-2">
-            {remoteContext.map((data, index) => (
-                <RemoteCard remoteData={data} key={`RemotePeerCard_${data.userData.userId}_${String(index)}`} />
+            {Object.keys(remoteContent).map((peerId, index) => (
+                <RemoteCard remoteData={remoteContent[peerId]} key={`RemotePeerCard_${peerId}_${String(index)}`} />
             ))}
             <div className="absolute bottom-4 right-4">
-                {userContext
-                    && <ContactCard
-                        audioActive={audioActive}
+                {userData && (
+                    <ContactCard
+                        audioActive={false}
                         videoActive={videoActive}
-                        audioStream={audioContext?.audioStream}
-                        videoStream={videoContext?.videoStream}
-                        muted={muted}
-                        userData={userContext}
-                    />}
+                        audioStream={audioStream}
+                        videoStream={videoStream}
+                        userData={userData}
+                        muted={true}
+                    />
+                )}
             </div>
         </div>
     );

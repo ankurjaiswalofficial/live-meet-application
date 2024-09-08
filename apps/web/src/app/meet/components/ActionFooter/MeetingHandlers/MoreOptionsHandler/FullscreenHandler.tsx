@@ -4,7 +4,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { FullscreenIcon } from 'lucide-react';
 import { toggleFullscreen } from '@/redux/slices/fullscreenSlice';
 import { RootState } from '@/redux/store';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
 
 export default function FullscreenHandler() {
     const isFullscreen = useSelector((state: RootState) => state.fullScreen.isFullscreen);

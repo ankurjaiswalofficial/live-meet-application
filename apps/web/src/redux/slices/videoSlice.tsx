@@ -1,29 +1,19 @@
-import {RefObject} from "react";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import { VideoContextType } from "@/context/videoContext";
+import { MediaStateInterface, VideoContextType } from "@/types/media-types";
 
-interface AudioState {
-    isActive: boolean;
-    isRecording: boolean;
-    videoUrl: string | null;
-    videoBlob: Blob | null;
-}
-
-const initialState: AudioState = {
+const initialState: MediaStateInterface = {
     isActive: false,
     isRecording: false,
-    videoUrl: null,
-    videoBlob: null,
+    url: null,
+    blob: null,
 };
 
 const toggleVideo = createAsyncThunk(
     "videoSlice/toggleVideo",
     async ({videoStream, setVideoStream}: VideoContextType, {getState}) => {
         const state = getState() as { videoHandler: { isActive: boolean, } };
-        console.log("Triggered toggleVideo() func and videoref is", videoStream, getState());
 
         if (state.videoHandler.isActive) {
-            console.log("inside active video");
             if (videoStream) {
                 const videoTracks = videoStream.getTracks();
                 videoTracks.forEach((track) => track.stop());
@@ -31,7 +21,6 @@ const toggleVideo = createAsyncThunk(
                 return false;
             }
         } else {
-            console.log("inside inactive video");
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
                     video: true,
@@ -65,14 +54,14 @@ const videoSlice = createSlice({
         },
         stopRecording: (state, action: PayloadAction<Blob>) => {
             state.isRecording = false;
-            state.videoBlob = action.payload;
-            state.videoUrl = URL.createObjectURL(action.payload);
+            state.blob = action.payload;
+            state.url = URL.createObjectURL(action.payload);
         },
         resetVideo: (state) => {
             state.isActive = false;
             state.isRecording = false;
-            state.videoUrl = null;
-            state.videoBlob = null;
+            state.url = null;
+            state.blob = null;
         },
     },
     extraReducers: (builder) => {

@@ -1,11 +1,6 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import dayjs from "dayjs";
 
-interface TimeSliceState {
-    currentTime: string;
-    currentDate: string;
-}
-
 const initialState: TimeSliceState = {
     currentTime: "Loading...",
     currentDate: "Loading...",
@@ -37,10 +32,10 @@ const timeSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(updateTime.fulfilled, (state, action) => {
+            .addCase(updateTime.fulfilled, () => {
                 console.log("Time Slice initialized");
             })
-            .addCase(updateDate.fulfilled, (state, action) => {
+            .addCase(updateDate.fulfilled, () => {
                 console.log("Date Slice initialized")
             })
 

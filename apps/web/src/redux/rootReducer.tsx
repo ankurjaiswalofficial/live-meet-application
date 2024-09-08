@@ -4,8 +4,8 @@ import { audioSliceReducer } from "@/redux/slices/audioSlice";
 import { timeSliceReducer } from "@/redux/slices/timeSlice";
 import { videoSliceReducer } from "@/redux/slices/videoSlice";
 import { screenSliceReducer } from "@/redux/slices/screenSlice";
-import { socketSliceReducer } from './slices/socketSlice';
 import { userSliceReducer } from './slices/userSlice';
+import { meetSliceReducer } from './slices/meetSlice';
 
 const rootReducer = combineReducers({
     timeHandler: timeSliceReducer,
@@ -13,8 +13,8 @@ const rootReducer = combineReducers({
     audioHandler: audioSliceReducer,
     videoHandler: videoSliceReducer,
     screenHandler: screenSliceReducer,
-    socketHandler: socketSliceReducer,
     userHandler: userSliceReducer,
+    meetHandler: meetSliceReducer,
 });
 
 export default rootReducer;

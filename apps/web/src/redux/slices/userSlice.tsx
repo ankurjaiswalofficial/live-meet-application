@@ -1,28 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { BaseUserDataInterface, UserDataInterface } from "@/types/user-types";
 
-export interface UserSliceStates {
-    name: string | null,
-    email: string | null,
-    imgSrc: string | null,
-    userId: string | null,
-}
 
-const initialState: UserSliceStates = {
-    name: null,
-    email: null,
+const initialState: BaseUserDataInterface = {
+    username: "null",
+    email: "null",
     imgSrc: null,
-    userId: null,
+    peerId: "null",
+    userData: null
 }
 
 const userSlice = createSlice({
     name: "userSlice",
     initialState,
     reducers: {
-        setUser: (state, action: {payload : UserSliceStates}) => {
-            state.name = action.payload.name
+        setUser: (state, action: {payload : UserDataInterface}) => {
+            state.username = action.payload.username
             state.email = action.payload.email
             state.imgSrc = action.payload.imgSrc
-            state.userId = action.payload.userId
+            state.peerId = action.payload.peerId
+            state.userData = action.payload
         }
     }
 })

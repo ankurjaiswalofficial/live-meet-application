@@ -1,25 +1,19 @@
 "use client";
-import { RootState } from '@/redux/store';
 import React, { useState } from 'react'
-import { useSelector } from "react-redux";
-import { useAppDispatch } from "@/redux/hooks";
-import { updateDate, updateTime } from "@/redux/slices/timeSlice";
+import useDateTime from '@/hooks/useDateTime';
 
 const DateTime = () => {
     const [isClient, setIsClient] = useState(false);
-
-    const currentDateTime = useSelector((state: RootState) => state.timeHandler)
-    const dispatch = useAppDispatch();
+    const { currentDate, currentTime, updateDateTime } = useDateTime();
 
     React.useEffect(() => {
         setIsClient(true);
-        dispatch(updateTime());
-        dispatch(updateDate());
-    }, [dispatch]);
+        updateDateTime();
+    }, [updateDateTime]);
 
     return (
         <div className="hidden sm:block text-base font-normal">
-            {isClient && currentDateTime.currentTime} • {isClient && currentDateTime.currentDate}
+            {isClient && currentTime} • {isClient && currentDate}
         </div>
     )
 }

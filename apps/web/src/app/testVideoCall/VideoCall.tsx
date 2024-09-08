@@ -91,7 +91,7 @@ const VideoCall: React.FC = () => {
                 await newPeerConnection.setLocalDescription(offer);
                 socket.send(JSON.stringify({ type: "offer", offer }));
             } catch (error) {
-                handleError(error);
+                handleError(error as Error);
             }
         };
         newPeerConnection.onsignalingstatechange = handleConnectionStateChanged;

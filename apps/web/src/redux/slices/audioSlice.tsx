@@ -1,19 +1,11 @@
-import { RefObject } from "react";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AudioContextType } from "@/context/audioContext";
+import { AudioContextType, MediaStateInterface } from "@/types/media-types";
 
-interface AudioState {
-    isActive: boolean;
-    isRecording: boolean;
-    audioUrl: string | null;
-    audioBlob: Blob | null;
-}
-
-const initialState: AudioState = {
+const initialState: MediaStateInterface = {
     isActive: false,
     isRecording: false,
-    audioUrl: null,
-    audioBlob: null,
+    url: null,
+    blob: null,
 };
 
 const toggleAudio = createAsyncThunk(
@@ -23,7 +15,6 @@ const toggleAudio = createAsyncThunk(
         console.log("Triggered toggleAudio() func and audioref is", audioStream, getState());
 
         if (state.audioHandler.isActive) {
-            console.log("inside active audio");
             if (audioStream) {
                 const audioTracks = audioStream.getTracks();
                 audioTracks.forEach((track) => track.stop());
@@ -31,7 +22,6 @@ const toggleAudio = createAsyncThunk(
                 return false;
             }
         } else {
-            console.log("inside inactive audio");
             try {
                 const mediaStream = await navigator.mediaDevices.getUserMedia({
                     audio: true,
@@ -66,14 +56,14 @@ const audioSlice = createSlice({
         },
         stopRecording: (state, action: PayloadAction<Blob>) => {
             state.isRecording = false;
-            state.audioBlob = action.payload;
-            state.audioUrl = URL.createObjectURL(action.payload);
+            state.blob = action.payload;
+            state.url = URL.createObjectURL(action.payload);
         },
         resetAudio: (state) => {
             state.isActive = false;
             state.isRecording = false;
-            state.audioUrl = null;
-            state.audioBlob = null;
+            state.url = null;
+            state.blob = null;
         },
     },
     extraReducers: (builder) => {

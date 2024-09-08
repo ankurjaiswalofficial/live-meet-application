@@ -1,23 +1,18 @@
 "use client";
-import {RootState} from '@/redux/store';
-import {Separator} from '@/components/ui/separator'
-import React, {useState} from 'react'
-import {useSelector} from "react-redux";
-import {useAppDispatch} from "@/redux/hooks";
-import {timeSliceActions, updateTime} from "@/redux/slices/timeSlice";
+import React, { useState } from 'react'
+import { Separator } from '@/components/ui/separator'
+import useMeetInfo from '@/hooks/useMeetInfo';
+import useDateTime from '@/hooks/useDateTime';
 
-interface MeetInfoProps {
-    meetingCode: string;
-}
-
-export default function MeetInfo({meetingCode}: Readonly<MeetInfoProps>) {
+export default function MeetInfo() {
     const [isClient, setIsClient] = useState(false);
-    const currentTime = useSelector((state: RootState) => state.timeHandler.currentTime)
-    const dispatch = useAppDispatch();
+    const { meetId } = useMeetInfo();
+    const { currentTime, updateTime } = useDateTime();
+
     React.useEffect(() => {
         setIsClient(true);
-        dispatch(updateTime());
-    }, [dispatch]);
+        updateTime();
+    }, [updateTime]);
 
     return (
         <div className="h-full items-center justify-start gap-2 hidden sm:flex">
@@ -27,7 +22,7 @@ export default function MeetInfo({meetingCode}: Readonly<MeetInfoProps>) {
                     orientation="vertical"
                     className="pr-0.5 h-5 bg-muted hidden xl:block"
                 />}
-                <p className='text-base text-nowrap min-w-12 max-w-28 overflow-hidden text-ellipsis'>{meetingCode}</p>
+                <p className='text-base text-nowrap min-w-12 max-w-28 overflow-hidden text-ellipsis'>{meetId}</p>
             </div>
         </div>
     )
