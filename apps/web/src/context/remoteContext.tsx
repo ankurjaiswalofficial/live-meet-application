@@ -6,6 +6,7 @@ const RemoteContext = createContext<RemoteContextProps | null>(null);
 
 const RemoteContextProvider = ({ children }: Readonly<{ children: ReactNode }>) => {
     const [remoteContent, setRemoteContent] = useState<RemoteContextProps["remoteContent"]>({});
+    // const [remoteData, setRemoteData] = useState<RemoteContextProps["remoteContent"]>({});
 
     const contextValue = useMemo(() => {
         return { remoteContent, setRemoteContent };

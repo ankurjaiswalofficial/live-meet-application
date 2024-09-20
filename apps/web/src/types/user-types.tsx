@@ -7,6 +7,7 @@ interface UserDataInterface {
 
 interface BaseUserDataInterface extends UserDataInterface {
     userData: UserDataInterface | null,
+    status: boolean
 }
 
 export type { UserDataInterface, BaseUserDataInterface }

@@ -7,7 +7,7 @@ import { RemoteContextProvider } from '@/context/remoteContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import SocketContextProvider from '@/context/socketContext';
-import PeerContextProvider from '@/context/peerContext';
+// import PeerContextProvider from '@/context/peerContext';
 
 function Meet() {
     const meetDetails = useSelector((state: RootState) => state.meetHandler.meetId);
@@ -16,14 +16,14 @@ function Meet() {
     }, [meetDetails])
     return (
         <SocketContextProvider>
-            <PeerContextProvider>
+            {/* <PeerContextProvider> */}
                 <RemoteContextProvider>
                     <MeetBase>
                         <MeetDisplay />
                         <ActionFooter />
                     </MeetBase>
                 </RemoteContextProvider>
-            </PeerContextProvider>
+            {/* </PeerContextProvider> */}
         </SocketContextProvider>
     );
 }

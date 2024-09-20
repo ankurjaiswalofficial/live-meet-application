@@ -32,7 +32,7 @@ const VideoCall: React.FC = () => {
         if (event.candidate) {
             socket.send(
                 JSON.stringify({
-                    type: "iceCandidate",
+                    type: "candidate",
                     candidate: event.candidate,
                 })
             );
@@ -141,7 +141,7 @@ const VideoCall: React.FC = () => {
                 case "answer":
                     handleAnswerReceived(message.answer);
                     break;
-                case "iceCandidate":
+                case "candidate":
                     peerConnection?.addIceCandidate(
                         new RTCIceCandidate(message.candidate)
                     );

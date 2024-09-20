@@ -1,23 +1,22 @@
 import TooltipIconButton from '@/components/TooltipIconButton'
 import useMedia from '@/hooks/useMedia';
 import useMediaStatus from '@/hooks/useMediaStatus';
-import usePeer from '@/hooks/usePeer';
+// import usePeer from '@/hooks/usePeer';
 import useRemote from '@/hooks/useRemote';
 import { useSocket } from '@/hooks/useSocket';
 import { Phone } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+// import { redirect } from 'next/navigation'
 import React, { useCallback } from 'react'
 
 export default function LeaveCallHandler() {
-    const router = useRouter();
     const { socket } = useSocket();
-    const { pc } = usePeer();
+    // const { pc } = usePeer();
     const { setRemoteContent } = useRemote();
     const { setAudioStream, setVideoStream, setScreenAudioStream, setScreenVideoStream } = useMedia();
     const { setAudioInactive, setVideoInactive, setScreenInactive } = useMediaStatus();
 
     const handleLeaveCall = useCallback(() => {
-        pc.close();
+        // pc.close();
         socket.disconnect();
         setAudioInactive();
         setVideoInactive();
@@ -27,8 +26,9 @@ export default function LeaveCallHandler() {
         setScreenAudioStream(null);
         setScreenVideoStream(null);
         setRemoteContent({});
-        router.push("/");
-    }, [pc, router, setAudioInactive, setAudioStream, setRemoteContent, setScreenAudioStream, setScreenInactive, setScreenVideoStream, setVideoInactive, setVideoStream, socket])
+        window.location.assign("/");
+        // redirect("/");
+    }, [setAudioInactive, setAudioStream, setRemoteContent, setScreenAudioStream, setScreenInactive, setScreenVideoStream, setVideoInactive, setVideoStream, socket])
 
     return (
         <TooltipIconButton

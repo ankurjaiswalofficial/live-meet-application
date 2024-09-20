@@ -1,8 +1,10 @@
 interface PeerContextInterface {
     pc: RTCPeerConnection;
-    createOffer: () => Promise<void>;
-    createAnswer: (offer: RTCSessionDescriptionInit) => Promise<void>;
-    setIceCandidate: (event: RTCPeerConnectionIceEvent) => Promise<void>;
+    createOffer: () => Promise<any>;
+    createAnswer: (offer: RTCSessionDescriptionInit) => Promise<any>;
+    setAnswer: (answer: RTCSessionDescriptionInit) => Promise<void>;
+    setIceCandidate: (event: RTCIceCandidateInit) => Promise<void>;
+    addTracks: (stream: MediaStream) => void;
 }
 
 
