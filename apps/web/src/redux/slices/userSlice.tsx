@@ -16,19 +16,20 @@ const populateUserData = createAsyncThunk(
     "userSlice/populateUserData",
     async ({ email }: { email: string }, { rejectWithValue }) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/routes/prismaUser`, {
+            const response = await fetch(`http://localhost:3000/api/routes/user`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email: email }),
             });
 
             if (!response.ok) {
                 return rejectWithValue(`Error: ${response.statusText}`);
             }
 
-            const user = await response.json();
+            const json = await response.json();
+            const user = json.user;
             if (!user) {
                 await signOut();
                 return rejectWithValue("User not found");

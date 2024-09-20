@@ -10,7 +10,7 @@ const useUser = () => {
     const dispatch = useAppDispatch();
 
     const setUserData = useMemo(() => (email: string) => {
-        dispatch(populateUserData({ email }))
+        dispatch(populateUserData({ email: email }))
     }, [dispatch]);
     const context = useMemo(() => {
         return {
