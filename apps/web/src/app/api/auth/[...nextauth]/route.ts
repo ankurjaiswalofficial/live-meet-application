@@ -5,7 +5,7 @@ import GithubProvider from "next-auth/providers/github";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -40,6 +40,7 @@ const handler = NextAuth({
               provider: "credentials",
             },
           });
+
           return newUser;
         }
 
@@ -77,7 +78,7 @@ const handler = NextAuth({
     //   // else if (new URL(url).origin === baseUrl) return url
     //   return baseUrl
     // },
-    async signIn({ user, account }) {
+    async signIn({ user, account }: any) {
       const { email } = user;
       if (!account) { return false; }
       if (account.provider === "google" || account.provider === "github") {
@@ -131,6 +132,8 @@ const handler = NextAuth({
   // },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+}
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

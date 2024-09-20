@@ -5,6 +5,7 @@ import AuthProvider from "@/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 import Providers from "@/providers/Providers";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   description: "Generated using create next app and developed by Ankur Jaiswal",
 };
 
-export default function RootLayout({
+function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -29,3 +30,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;
