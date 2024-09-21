@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import ActionFooter from "./components/ActionFooter/ActionFooter";
 import MeetBase from "./MeetBase";
 import MeetDisplay from "./MeetDisplay";
-import { RemoteContextProvider } from '@/context/remoteContext';
+// import { RemoteContextProvider } from '@/context/remoteContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import SocketContextProvider from '@/context/socketContext';
@@ -17,12 +17,12 @@ function Meet() {
     return (
         <SocketContextProvider>
             {/* <PeerContextProvider> */}
-                <RemoteContextProvider>
+                {/* <RemoteContextProvider> */}
                     <MeetBase>
                         <MeetDisplay />
                         <ActionFooter />
                     </MeetBase>
-                </RemoteContextProvider>
+                {/* </RemoteContextProvider> */}
             {/* </PeerContextProvider> */}
         </SocketContextProvider>
     );

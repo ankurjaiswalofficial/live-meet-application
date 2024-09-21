@@ -3,9 +3,9 @@ import useMeetInfo from '@/hooks/useMeetInfo';
 import useMedia from '@/hooks/useMedia';
 import { useSocket } from '@/hooks/useSocket'
 import useUser from '@/hooks/useUser';
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useMediaStatus from '@/hooks/useMediaStatus';
-import useRemote from '@/hooks/useRemote';
+// import useRemote from '@/hooks/useRemote';
 
 export default function MeetBase({ children }: Readonly<{ children: React.ReactNode }>) {
     const { meetId } = useMeetInfo();
@@ -13,8 +13,20 @@ export default function MeetBase({ children }: Readonly<{ children: React.ReactN
     const { socket } = useSocket();
     const { audioStream, videoStream } = useMedia();
     const { audioActive, videoActive } = useMediaStatus();
-    const { remoteContent, setRemoteContent } = useRemote();
+    // const { remoteContent, setRemoteContent } = useRemote();
     const [peers, setPeers] = useState<{ [Key: string]: RTCPeerConnection[] } | null>(null);
+
+    const initPeerConnection = () => {
+        const pc = new RTCPeerConnection({
+            iceServers: [
+                {
+                    urls: "stun:stun.l.google.com:19302",
+                }
+            ]
+        })
+        
+        return pc;
+    }
 
     useEffect(() => {
         socket.emit("open", "Open Socket Test");
@@ -25,7 +37,7 @@ export default function MeetBase({ children }: Readonly<{ children: React.ReactN
         return () => {
             socket.close()
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

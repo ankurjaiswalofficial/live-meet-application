@@ -1,35 +1,35 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { createMeet } from "./handler/db";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000", // Allow all origins (you can specify specific origins if needed)
-        methods: ["GET", "POST"], // Allowed HTTP methods
-        allowedHeaders: ["my-custom-header"], // Specify allowed headers
-        credentials: true // Allow credentials (cookies, authorization headers, etc.)
-    }
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    },
 });
+
 const usersToMeet: Map<string, Map<string, Array<any>>> = new Map();
 
 io.on("connection", (socket) => {
     console.log(`Someone connected to socket server and socket id is ${socket.id}`);
 
-    socket.on("create-meet", ({ meetId, userData }) => {
-        if (usersToMeet.get(meetId)) {
-            socket.to(socket.id).emit("exists", false);
-        }
-        else {
-            const peerMap: Map<string, Array<any>> = new Map();
-            const arrayData = new Array();
-            arrayData.push(socket.id);
-            arrayData.push(userData);
-            peerMap.set(userData.peerId, arrayData);
-            usersToMeet.set(meetId, peerMap);
-        }
-    })
+    // socket.on("create-meet", async ({user, meetType}) => {
+
+    //     const meetId = await createMeet(user, meetType);
+        
+    //     const peerMap: Map<string, Array<any>> = new Map();
+    //     const arrayData = new Array();
+    //     arrayData.push(socket.id);
+    //     arrayData.push(userData);
+    //     peerMap.set(userData.peerId, arrayData);
+    //     usersToMeet.set(meetId, peerMap);
+    // })
 
     socket.on("join-meet", ({ meetId, userData }) => {
         console.log("join", userData.peerId);
@@ -44,13 +44,13 @@ io.on("connection", (socket) => {
             arrayData.push(socket.id);
             arrayData.push(userData);
             usersToMeet.get(meetId)?.set(userData.peerId, arrayData)
-                // ?.forEach((peerData) => {
-                //     if (peerData[1].peerId !== userData.peerId) {
-                //         console.log("New Peer JOIN MEET")
-                //         socket.to(peerData[0]).emit("new-peer", { meetId,  });
-                //     }
-                // })
-                // 
+            // ?.forEach((peerData) => {
+            //     if (peerData[1].peerId !== userData.peerId) {
+            //         console.log("New Peer JOIN MEET")
+            //         socket.to(peerData[0]).emit("new-peer", { meetId,  });
+            //     }
+            // })
+            // 
             socket.to(socket.id).emit("send-media-status", { meetId, userData });
         }
         else {

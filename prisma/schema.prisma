@@ -20,13 +20,15 @@ model User {
   updatedAt     DateTime  @updatedAt
   Account       Account[]
   Session       Session[]
+  Meet          Meet[]
+  Peer          Peer?
 
   @@unique([id, peerId])
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -56,4 +58,23 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Meet {
+  id        String   @id @default(cuid())
+  hostId    String
+  host      User     @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  peers     String[]
+  active    Boolean
+  createdAt DateTime @default(now())
+  Peer      Peer[]
+}
+
+model Peer {
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id])
+  approved Boolean
+  meetId   String
+  meet     Meet     @relation(fields: [meetId], references: [id])
 }
