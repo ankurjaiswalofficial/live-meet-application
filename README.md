@@ -1,58 +1,117 @@
-# Turborepo Tailwind CSS starter
+# Live Meet Application
 
-This is an official starter Turborepo.
+#### The URL has 50 seconds of delay start so please consider it as it's by default through render.com on free accounts for deployments...
 
-## Using this example
+A real-time meeting platform built using cutting-edge technologies, offering a seamless and interactive experience for users. This application provides features like video conferencing, chat, and collaborative tools to enhance online meetings.
 
-Run the following command:
+## Table of Contents
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
 
-```sh
-npx create-turbo@latest -e with-tailwind
-```
+## Tech Stack
 
-## What's inside?
+### Frontend
+- **React**: A JavaScript library for building user interfaces.
+- **Next.js**: A React framework for server-side rendering and static site generation.
+- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+- **Radix UI**: A set of unstyled, accessible components for building rich UI experiences.
+- **React Hook Form**: A library for managing forms and validation in React.
+- **Embla Carousel**: A library for building responsive and customizable carousels.
+- **React Player**: A media player component for React.
+- **Socket.io Client**: For real-time, bi-directional communication.
 
-This Turborepo includes the following packages/apps:
+### Backend & Authentication
+- **NextAuth.js**: Authentication for Next.js applications with support for multiple providers.
+- **Prisma**: An ORM for seamless database integration.
+- **Bcrypt**: A library for hashing and checking passwords.
+- **JSON Web Token (JWT)**: For secure authentication and authorization.
+- **Zod**: A TypeScript-first schema declaration and validation library.
 
-### Apps and Packages
+### Real-Time
+- **Socket.io**: A library for real-time communication.
+- **WebRTC**: A technology for enabling real-time communication directly between browsers for peer-to-peer video and audio streaming.
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Optimization & Performance
+- **Turbo.js**: A framework for optimizing real-time application updates and ensuring a smooth user experience.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Building packages/ui
-
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.js`. This was chosen for several reasons:
-
-- Make sharing one `tailwind.config.js` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
-
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.js` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
-
-For example, in [tailwind.config.js](packages/tailwind-config/tailwind.config.js):
-
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
-```
-
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+### State Management
+- **Redux Toolkit**: A library for efficient state management in React.
 
 ### Utilities
+- **Date-fns** and **Day.js**: For date and time manipulation.
+- **Lucide React**: A library for customizable icons in React.
+- **Clsx**: A utility for dynamically building class names.
+- **Tailwind Merge**: For combining Tailwind CSS classes dynamically.
 
-This Turborepo has some additional tools already setup for you:
+### Dev Tools
+- **ESLint**: A linter for identifying and fixing problems in JavaScript code.
+- **TypeScript**: A strongly typed programming language that builds on JavaScript.
+- **PostCSS**: A tool for transforming CSS with JavaScript plugins.
+- **Prisma**: An ORM for TypeScript/JavaScript.
 
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Features
+- **Real-Time Video Conferencing**: Host and join live video meetings using WebRTC and Video SDK Live.
+- **Chat Integration**: Text chat with participants during live meetings.
+- **Optimized Performance**: Turbo.js ensures real-time updates and an optimized user experience.
+- **Responsive UI**: Built with Tailwind CSS for a mobile-first, responsive design.
+- **Authentication**: Secure login and user management using NextAuth.js and JWT.
+- **State Management**: Efficient state handling with Redux Toolkit.
+- **Form Validation**: Using React Hook Form integrated with Zod for schema validation.
+- **Customizable Components**: Using Radix UI for building accessible and flexible UI components.
+
+## Installation
+
+### Prerequisites
+- Node.js and npm installed on your system.
+
+### Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ankurjaiswalofficial/live-meet-application.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd live-meet-app
+   ```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+4. Set up the environment variables by creating a `.env.local` file and adding necessary configurations (e.g., database URL, authentication providers, etc.).
+5. Run Prisma migrations to set up the database:
+   ```bash
+   npx prisma migrate dev
+   ```
+    
+Usage
+-----
+
+### Development
+
+Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+Visit http://localhost:3000 to view the application locally.
+
+### Production
+
+To build and run the application in production:
+
+   ```bash
+   npm run build npm start
+   ```
+
+### Deployment
+
+This application can be easily deployed on platforms like Render like platforms so that its backend could run properly. Ensure your environment variables are correctly set up in the deployment platform.
+
+License
+-------
+
+This project is licensed under the MIT License.
